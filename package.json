@@ -1,0 +1,25 @@
+{
+  "name": "sender-form",
+  "version": "0.0.1",
+  "description": "multichain andtoken-gated DeForms protocol",
+  "main": "index.js",
+  "scripts": {
+    "start": "echo hello from Sender-Form"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/decentldotland/sender-form.git"
+  },
+  "keywords": [
+    "sender-protocol",
+    "forms",
+    "web3",
+    "decentland"
+  ],
+  "author": "charmful0x",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/decentldotland/sender-form/issues"
+  },
+  "homepage": "https://github.com/decentldotland/sender-form#readme"
+}
