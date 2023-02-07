@@ -36,8 +36,6 @@ export async function handle(state, action) {
       "ERROR_CANNOT_WL_USER"
     );
 
-    signatures.push(signature);
-
     list.push({
       evm: caller,
       arweave: arweave_address,
@@ -125,6 +123,7 @@ export async function handle(state, action) {
         `${evm_molecule_endpoint}/signer/${caller}/${message}/${signature}`
       );
       ContractAssert(isValid.asJSON()?.result, "unauthorized caller");
+      signatures.push(signature);
     } catch (error) {
       throw new ContractError("molecule res error");
     }
