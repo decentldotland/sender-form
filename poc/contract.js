@@ -8,6 +8,8 @@ export async function handle(state, action) {
   const evm_molecule_endpoint = state.evm_molecule_endpoint;
   const arweave_addresses = state.arweave_addresses;
   const admin_address = state.admin_address;
+  const ark_nft_contract = state.ark_nft_contract;
+  const emily_nft_contract = state.emily_nft_contract;
 
   if (input.function === "apply") {
     const arweave_address = input.arweave_address;
@@ -28,25 +30,25 @@ export async function handle(state, action) {
     await _moleculeSignatureVerification(caller, signature);
 
     const IS_EVERPAY_WINNER = everfinance_nft_auctions.includes(caller); // check 1
-    const IS_ARNS_OWNER = await _getArnsRecord(arweave_address, caller); // check 2
-    const IS_ARK_NFT_HOLDER = await _isArkNftHolder(caller); // check 3
+    const IS_ARK_NFT_HOLDER = await _isNftHolder(caller, ark_nft_contract); // check 2
+    const IS_EMILY_NFT_HOLDER = await _isNftHolder(caller, emily_nft_contract); // check 3
 
     ContractAssert(
-      IS_ARK_NFT_HOLDER || IS_EVERPAY_WINNER || IS_ARNS_OWNER,
+      IS_ARK_NFT_HOLDER || IS_EVERPAY_WINNER || IS_EMILY_NFT_HOLDER,
       "ERROR_CANNOT_WL_USER"
     );
 
     list.push({
       evm: caller,
       arweave: arweave_address,
-      results: { IS_ARK_NFT_HOLDER, IS_ARNS_OWNER, IS_EVERPAY_WINNER },
+      results: { IS_ARK_NFT_HOLDER, IS_EVERPAY_WINNER, IS_EMILY_NFT_HOLDER },
     });
 
     arweave_addresses.push(arweave_address);
 
     return {
       state,
-      result: { IS_ARK_NFT_HOLDER, IS_ARNS_OWNER, IS_EVERPAY_WINNER },
+      result: { IS_ARK_NFT_HOLDER, IS_EVERPAY_WINNER, IS_EMILY_NFT_HOLDER },
     };
   }
 
@@ -76,31 +78,11 @@ export async function handle(state, action) {
     );
   }
 
-  async function _getArnsRecord(arweave_address, evm_address) {
+
+  async function _isNftHolder(evm_address, contract_address) {
     try {
       const req = await EXM.deterministicFetch(
-        `https://ark-core.decent.land/v2/domains/arweave/${arweave_address}`
-      );
-
-      const arkConnection = await EXM.deterministicFetch(
-        `https://ark-core.decent.land/v2/address/resolve/${evm_address}`
-      );
-
-      const arns = req.asJSON()?.ARNS;
-      const ark_ar_address = arkConnection.asJSON()?.arweave_address;
-
-      return (
-        arns && ark_ar_address.toLowerCase() === arweave_address.toLowerCase()
-      );
-    } catch (error) {
-      throw new ContractError("molecule res error");
-    }
-  }
-
-  async function _isArkNftHolder(evm_address) {
-    try {
-      const req = await EXM.deterministicFetch(
-        `https://molecule-apis-wrapper.herokuapp.com/ark-collection`
+        `https://molecule-apis-wrapper.herokuapp.com/sender-form-collection/${contract_address}`
       );
       const state = req.asJSON()?.result;
       const isOwner = state
