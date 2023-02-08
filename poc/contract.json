@@ -2,6 +2,8 @@
   "verification_message": "hello world",
   "evm_molecule_endpoint": "http://evm.molecule.sh",
   "admin_address": "0x197f818c1313dc58b32d88078ecdfb40ea822614",
+  "ark_nft_contract": "0xb1cdb97ddc2b05ad9be7be17eabba3a0f42453fa ",
+  "emily_nft_contract": "0xBE216D8511D6eC707BC6aB24d814F63c68e4E83a ",
   "arweave_addresses": [],
   "everfinance_nft_auctions": [],
   "list": [],
