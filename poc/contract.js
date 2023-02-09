@@ -34,12 +34,14 @@ export async function handle(state, action) {
     const IS_ARK_NFT_HOLDER = await _isNftHolder(caller, ark_nft_contract); // check 2
     const IS_EMILY_NFT_HOLDER = await _isNftHolder(caller, emily_nft_contract); // check 3
     const IS_AURO_BOTS_HOLDER = await _isAuroBotsHolder(caller); // check 4
+    const IS_ARK_PROTOCOL_USER = await _isArkProtocolUser(caller); // check 5
 
     ContractAssert(
       IS_ARK_NFT_HOLDER ||
         IS_EVERPAY_WINNER ||
         IS_EMILY_NFT_HOLDER ||
-        IS_AURO_BOTS_HOLDER,
+        IS_AURO_BOTS_HOLDER ||
+        IS_ARK_PROTOCOL_USER,
       "ERROR_CANNOT_WL_USER"
     );
 
@@ -51,6 +53,7 @@ export async function handle(state, action) {
         IS_EVERPAY_WINNER,
         IS_EMILY_NFT_HOLDER,
         IS_AURO_BOTS_HOLDER,
+        IS_ARK_PROTOCOL_USER,
       },
     });
 
@@ -63,6 +66,7 @@ export async function handle(state, action) {
         IS_EVERPAY_WINNER,
         IS_EMILY_NFT_HOLDER,
         IS_AURO_BOTS_HOLDER,
+        IS_ARK_PROTOCOL_USER,
       },
     };
   }
@@ -115,6 +119,18 @@ export async function handle(state, action) {
       );
       const res = req.asJSON();
       return res?.message === "OK" && !!Number(res?.result);
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async function _isArkProtocolUser(evm_address) {
+    try {
+      const req = await EXM.deterministicFetch(
+        `https://ark-core.decent.land/v2/address/resolve/${evm_address}`
+      );
+      const res = req.asJSON();
+      return !!res?.arweave_address || false;
     } catch (error) {
       return false;
     }
