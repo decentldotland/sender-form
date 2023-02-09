@@ -10,6 +10,7 @@ export async function handle(state, action) {
   const admin_address = state.admin_address;
   const ark_nft_contract = state.ark_nft_contract;
   const emily_nft_contract = state.emily_nft_contract;
+  const aurobots_nft_contract = state.aurobots_nft_contract;
 
   if (input.function === "apply") {
     const arweave_address = input.arweave_address;
@@ -32,23 +33,37 @@ export async function handle(state, action) {
     const IS_EVERPAY_WINNER = everfinance_nft_auctions.includes(caller); // check 1
     const IS_ARK_NFT_HOLDER = await _isNftHolder(caller, ark_nft_contract); // check 2
     const IS_EMILY_NFT_HOLDER = await _isNftHolder(caller, emily_nft_contract); // check 3
+    const IS_AURO_BOTS_HOLDER = await _isAuroBotsHolder(caller); // check 4
 
     ContractAssert(
-      IS_ARK_NFT_HOLDER || IS_EVERPAY_WINNER || IS_EMILY_NFT_HOLDER,
+      IS_ARK_NFT_HOLDER ||
+        IS_EVERPAY_WINNER ||
+        IS_EMILY_NFT_HOLDER ||
+        IS_AURO_BOTS_HOLDER,
       "ERROR_CANNOT_WL_USER"
     );
 
     list.push({
       evm: caller,
       arweave: arweave_address,
-      results: { IS_ARK_NFT_HOLDER, IS_EVERPAY_WINNER, IS_EMILY_NFT_HOLDER },
+      results: {
+        IS_ARK_NFT_HOLDER,
+        IS_EVERPAY_WINNER,
+        IS_EMILY_NFT_HOLDER,
+        IS_AURO_BOTS_HOLDER,
+      },
     });
 
     arweave_addresses.push(arweave_address);
 
     return {
       state,
-      result: { IS_ARK_NFT_HOLDER, IS_EVERPAY_WINNER, IS_EMILY_NFT_HOLDER },
+      result: {
+        IS_ARK_NFT_HOLDER,
+        IS_EVERPAY_WINNER,
+        IS_EMILY_NFT_HOLDER,
+        IS_AURO_BOTS_HOLDER,
+      },
     };
   }
 
@@ -78,7 +93,6 @@ export async function handle(state, action) {
     );
   }
 
-
   async function _isNftHolder(evm_address, contract_address) {
     try {
       const req = await EXM.deterministicFetch(
@@ -90,7 +104,19 @@ export async function handle(state, action) {
         .includes(evm_address.toLowerCase());
       return isOwner;
     } catch (error) {
-      throw new ContractError("molecule res error");
+      return false;
+    }
+  }
+
+  async function _isAuroBotsHolder(evm_address) {
+    try {
+      const req = await EXM.deterministicFetch(
+        `https://explorer.mainnet.aurora.dev/api?module=account&action=tokenbalance&contractaddress=${aurobots_nft_contract}&address=${evm_address}`
+      );
+      const res = req.asJSON();
+      return res?.message === "OK" && !!Number(res?.result);
+    } catch (error) {
+      return false;
     }
   }
 
