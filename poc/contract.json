@@ -1,5 +1,6 @@
 {
-  "verification_message": "hello world",
+  "verification_message": "WL me for ANS",
+  "counter": 0,
   "evm_molecule_endpoint": "http://evm.molecule.sh",
   "admin_address": "0x197f818c1313dc58b32d88078ecdfb40ea822614",
   "ark_nft_contract": "0xb1cdb97ddc2b05ad9be7be17eabba3a0f42453fa",
