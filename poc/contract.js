@@ -35,13 +35,20 @@ export async function handle(state, action) {
     const IS_EMILY_NFT_HOLDER = await _isNftHolder(caller, emily_nft_contract); // check 3
     const IS_AURO_BOTS_HOLDER = await _isAuroBotsHolder(caller); // check 4
     const IS_ARK_PROTOCOL_USER = await _isArkProtocolUser(caller); // check 5
+    const IS_MASK_TOKEN_HOLDER = await _isTokenHolder(caller, "mask"); // check 6
+    const IS_RSS3_TOKEN_HOLDER = await _isTokenHolder(caller, "rss3"); // check 7
+    const IS_SARCO_TOKEN_HOLDER = await _isTokenHolder(caller, "sarco"); // check 7
+
 
     ContractAssert(
       IS_ARK_NFT_HOLDER ||
         IS_EVERPAY_WINNER ||
         IS_EMILY_NFT_HOLDER ||
         IS_AURO_BOTS_HOLDER ||
-        IS_ARK_PROTOCOL_USER,
+        IS_ARK_PROTOCOL_USER ||
+        IS_MASK_TOKEN_HOLDER ||
+        IS_RSS3_TOKEN_HOLDER ||
+        IS_SARCO_TOKEN_HOLDER,
       "ERROR_CANNOT_WL_USER"
     );
 
@@ -54,6 +61,9 @@ export async function handle(state, action) {
         IS_EMILY_NFT_HOLDER,
         IS_AURO_BOTS_HOLDER,
         IS_ARK_PROTOCOL_USER,
+        IS_MASK_TOKEN_HOLDER,
+        IS_RSS3_TOKEN_HOLDER,
+        IS_SARCO_TOKEN_HOLDER,
       },
     });
 
@@ -67,6 +77,9 @@ export async function handle(state, action) {
         IS_EMILY_NFT_HOLDER,
         IS_AURO_BOTS_HOLDER,
         IS_ARK_PROTOCOL_USER,
+        IS_MASK_TOKEN_HOLDER,
+        IS_RSS3_TOKEN_HOLDER,
+        IS_SARCO_TOKEN_HOLDER,
       },
     };
   }
@@ -131,6 +144,18 @@ export async function handle(state, action) {
       );
       const res = req.asJSON();
       return !!res?.arweave_address || false;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async function _isTokenHolder(evm_address, token) {
+    try {
+      const req = await EXM.deterministicFetch(
+        `https://molecule-apis-wrapper.herokuapp.com/sender-form-erc20/${evm_address}/${token}`
+      );
+      const res = req.asJSON();
+      return !!res?.result || false;
     } catch (error) {
       return false;
     }
