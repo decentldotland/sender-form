@@ -15,7 +15,7 @@ Sender-Form is a token-gated web3 form protocol that operates on multiple blockc
 Sender-Form protocol smart contracts will be serverless functions deployed on the [EXM protocol](https://exm.dev). The protocol contracts will use [molecule.sh](https://molecule.sh/) molecules to facilitate multichain gasless user's authentication (through EOAs).
 
 ## Proof of Concept
-The first proof of concept (PoC) for Sender-Form is a whitelisting form for ANS Protocol. The whitelist contract includes various conditional checks to validate the validity of the user and ensure the submission of a valid Arweave address for whitelisting. [source code](./poc) | [contract address](https://zxcPHmIeSYqF2dQstdIdDFcY9lTqhKQ0e8XTrrVuOIA.exm.run)
+The first proof of concept (PoC) for Sender-Form is a whitelisting form for ANS Protocol. The whitelist contract includes various conditional checks to validate the validity of the user and ensure the submission of a valid Arweave address for whitelisting. [source code](./poc) | [contract address](https://s-ZSzIpst-2GY79lg9LVEODPlHIXJUWvGyeF0Ps-_XU.exm.run)
 
 ## License 
 This project is licensed under the [MIT License](./LICENSE)
