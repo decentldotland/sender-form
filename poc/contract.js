@@ -192,12 +192,13 @@ export async function handle(state, action) {
         !signatures.includes(signature),
         "error signed message used"
       );
-      const message = btoa(verification_message);
+      const message = btoa(verification_message + state.counter);
       const isValid = await EXM.deterministicFetch(
         `${evm_molecule_endpoint}/signer/${caller}/${message}/${signature}`
       );
       ContractAssert(isValid.asJSON()?.result, "unauthorized caller");
       signatures.push(signature);
+      state.counter += 1;
     } catch (error) {
       throw new ContractError("molecule res error");
     }
