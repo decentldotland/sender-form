@@ -39,7 +39,6 @@ export async function handle(state, action) {
     const IS_RSS3_TOKEN_HOLDER = await _isTokenHolder(caller, "rss3"); // check 7
     const IS_SARCO_TOKEN_HOLDER = await _isTokenHolder(caller, "sarco"); // check 7
 
-
     ContractAssert(
       IS_ARK_NFT_HOLDER ||
         IS_EVERPAY_WINNER ||
@@ -71,6 +70,32 @@ export async function handle(state, action) {
 
     return {
       state,
+      result: {
+        IS_ARK_NFT_HOLDER,
+        IS_EVERPAY_WINNER,
+        IS_EMILY_NFT_HOLDER,
+        IS_AURO_BOTS_HOLDER,
+        IS_ARK_PROTOCOL_USER,
+        IS_MASK_TOKEN_HOLDER,
+        IS_RSS3_TOKEN_HOLDER,
+        IS_SARCO_TOKEN_HOLDER,
+      },
+    };
+  }
+
+  if (input.function === "checkUserStatus") {
+    const address = input.address;
+
+    const IS_EVERPAY_WINNER = everfinance_nft_auctions.includes(address); // check 1
+    const IS_ARK_NFT_HOLDER = await _isNftHolder(address, ark_nft_contract); // check 2
+    const IS_EMILY_NFT_HOLDER = await _isNftHolder(address, emily_nft_contract); // check 3
+    const IS_AURO_BOTS_HOLDER = await _isAuroBotsHolder(address); // check 4
+    const IS_ARK_PROTOCOL_USER = await _isArkProtocolUser(address); // check 5
+    const IS_MASK_TOKEN_HOLDER = await _isTokenHolder(address, "mask"); // check 6
+    const IS_RSS3_TOKEN_HOLDER = await _isTokenHolder(address, "rss3"); // check 7
+    const IS_SARCO_TOKEN_HOLDER = await _isTokenHolder(address, "sarco"); // check 7
+
+    return {
       result: {
         IS_ARK_NFT_HOLDER,
         IS_EVERPAY_WINNER,
