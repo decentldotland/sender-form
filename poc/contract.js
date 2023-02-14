@@ -37,7 +37,8 @@ export async function handle(state, action) {
     const IS_ARK_PROTOCOL_USER = await _isArkProtocolUser(caller); // check 5
     const IS_MASK_TOKEN_HOLDER = await _isTokenHolder(caller, "mask"); // check 6
     const IS_RSS3_TOKEN_HOLDER = await _isTokenHolder(caller, "rss3"); // check 7
-    const IS_SARCO_TOKEN_HOLDER = await _isTokenHolder(caller, "sarco"); // check 7
+    const IS_SARCO_TOKEN_HOLDER = await _isTokenHolder(caller, "sarco"); // check 8
+    const IS_RWP_NFT_HOLDER = await _isNftHolder(caller, "rwp"); // check 9
 
     ContractAssert(
       IS_ARK_NFT_HOLDER ||
@@ -47,7 +48,8 @@ export async function handle(state, action) {
         IS_ARK_PROTOCOL_USER ||
         IS_MASK_TOKEN_HOLDER ||
         IS_RSS3_TOKEN_HOLDER ||
-        IS_SARCO_TOKEN_HOLDER,
+        IS_SARCO_TOKEN_HOLDER ||
+        IS_RWP_NFT_HOLDER,
       "ERROR_CANNOT_WL_USER"
     );
 
@@ -63,6 +65,7 @@ export async function handle(state, action) {
         IS_MASK_TOKEN_HOLDER,
         IS_RSS3_TOKEN_HOLDER,
         IS_SARCO_TOKEN_HOLDER,
+        IS_RWP_NFT_HOLDER,
       },
     });
 
@@ -79,32 +82,7 @@ export async function handle(state, action) {
         IS_MASK_TOKEN_HOLDER,
         IS_RSS3_TOKEN_HOLDER,
         IS_SARCO_TOKEN_HOLDER,
-      },
-    };
-  }
-
-  if (input.function === "checkUserStatus") {
-    const address = input.address;
-
-    const IS_EVERPAY_WINNER = everfinance_nft_auctions.includes(address); // check 1
-    const IS_ARK_NFT_HOLDER = await _isNftHolder(address, ark_nft_contract); // check 2
-    const IS_EMILY_NFT_HOLDER = await _isNftHolder(address, emily_nft_contract); // check 3
-    const IS_AURO_BOTS_HOLDER = await _isAuroBotsHolder(address); // check 4
-    const IS_ARK_PROTOCOL_USER = await _isArkProtocolUser(address); // check 5
-    const IS_MASK_TOKEN_HOLDER = await _isTokenHolder(address, "mask"); // check 6
-    const IS_RSS3_TOKEN_HOLDER = await _isTokenHolder(address, "rss3"); // check 7
-    const IS_SARCO_TOKEN_HOLDER = await _isTokenHolder(address, "sarco"); // check 7
-
-    return {
-      result: {
-        IS_ARK_NFT_HOLDER,
-        IS_EVERPAY_WINNER,
-        IS_EMILY_NFT_HOLDER,
-        IS_AURO_BOTS_HOLDER,
-        IS_ARK_PROTOCOL_USER,
-        IS_MASK_TOKEN_HOLDER,
-        IS_RSS3_TOKEN_HOLDER,
-        IS_SARCO_TOKEN_HOLDER,
+        IS_RWP_NFT_HOLDER,
       },
     };
   }
@@ -138,9 +116,12 @@ export async function handle(state, action) {
   async function _isNftHolder(evm_address, contract_address) {
     try {
       const req = await EXM.deterministicFetch(
-        `https://molecule-apis-wrapper.herokuapp.com/sender-form-collection/${contract_address}`
+        `https://molecule-apis-wrapper.herokuapp.com/sender-form-collection/${contract_address}/${evm_address}`
       );
       const state = req.asJSON()?.result;
+      if (contract_address === "rwp") {
+        return state;
+      }
       const isOwner = state
         .map((obj) => obj.owner_of.toLowerCase())
         .includes(evm_address.toLowerCase());
